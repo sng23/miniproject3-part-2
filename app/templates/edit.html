@@ -1,0 +1,21 @@
+{% extends "layout.html" %}
+{% block content %}
+<form action="/edit/{{hw.id}}" method="post">
+    <div class="row">
+        <div class="col">
+            <label for="fldHeightInches">Height (Inches)</label>
+            <input id="fldHeightInches" type="text" class="form-control" placeholder="Height"
+                   name="fldHeightInches" value="{{hw.fldHeightInches}}">
+        </div>
+        <div class="col">
+            <label for="fldWeightPounds">Weight (Pounds)</label>
+            <input id="fldWeightPounds" type="text" class="form-control" placeholder="Weight"
+                   name="fldWeightPounds" value="{{hw.fldWeightPounds}}">
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-success">Save</button>
+
+</form>
+{% endblock %}
+
