@@ -80,7 +80,7 @@ def api_browse() -> str:
     cursor = mysql.get_db().cursor()
     cursor.execute('SELECT * FROM tblHwImport')
     result = cursor.fetchall()
-    json_result = json.dumps(result);
+    json_result = json.dumps(result)
     resp = Response(json_result, status=200, mimetype='application/json')
     return resp
 
@@ -90,26 +90,42 @@ def api_retrieve(hw_id) -> str:
     cursor = mysql.get_db().cursor()
     cursor.execute('SELECT * FROM tblHwImport WHERE id=%s', hw_id)
     result = cursor.fetchall()
-    json_result = json.dumps(result);
+    json_result = json.dumps(result)
     resp = Response(json_result, status=200, mimetype='application/json')
-    return resp
-
-
-@app.route('/api/v1/hw/', methods=['POST'])
-def api_add() -> str:
-    resp = Response(status=201, mimetype='application/json')
     return resp
 
 
 @app.route('/api/v1/hw/<int:hw_id>', methods=['PUT'])
 def api_edit(hw_id) -> str:
+    cursor = mysql.get_db().cursor()
+    content = request.json
+    input_data = (content['fldHeightInches'], content['fldWeightPounds'], hw_id)
+    sql_update_query = """UPDATE tblHwImport t SET t.fldHeightInches = %s, t.fldWeightPounds = %s WHERE t.id = %s """
+    cursor.execute(sql_update_query, input_data)
+    mysql.get_db().commit()
+    resp = Response(status=200, mimetype='application/json')
+    return resp
+
+
+@app.route('/api/v1/hw', methods=['POST'])
+def api_add() -> str:
+    content = request.json
+    cursor = mysql.get_db().cursor()
+    input_data = (content['fldHeightInches'], content['fldWeightPounds'])
+    sql_insert_query = """INSERT INTO tblHwImport ( fldHeightInches, fldWeightPounds) VALUES ( %s, %s) """
+    cursor.execute(sql_insert_query, input_data)
+    mysql.get_db().commit()
     resp = Response(status=201, mimetype='application/json')
     return resp
 
 
-@app.route('/api/hw/<int:hw_id>', methods=['DELETE'])
+@app.route('/api/v1/hw/<int:hw_id>', methods=['DELETE'])
 def api_delete(hw_id) -> str:
-    resp = Response(status=210, mimetype='application/json')
+    cursor = mysql.get_db().cursor()
+    sql_delete_query = """DELETE FROM tblHwImport WHERE id = %s """
+    cursor.execute(sql_delete_query, hw_id)
+    mysql.get_db().commit()
+    resp = Response(status=200, mimetype='application/json')
     return resp
 
 
